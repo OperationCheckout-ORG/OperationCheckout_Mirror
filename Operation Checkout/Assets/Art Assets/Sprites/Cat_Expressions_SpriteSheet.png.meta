@@ -119,8 +119,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c3dcc95859d9ae2468e84d0b09b17399
-      internalID: -135048201
+      spriteID: 2a4a7b74ff8ec2d4eafa0ff556ecbef6
+      internalID: -523329146
       vertices: []
       indices: 
       edges: []
@@ -140,8 +140,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 125c52fd2c871e14690acb2dc5173378
-      internalID: -259942035
+      spriteID: f670499833e38cb4480cbe1d125327b7
+      internalID: 1148923493
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cat_Expressions_SpriteSheet_2
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 1024
+        width: 512
+        height: 512
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3234d55951957d04d84942984f950098
+      internalID: -1199053809
       vertices: []
       indices: 
       edges: []
@@ -157,8 +178,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Cat_Expressions_SpriteSheet_0: -135048201
-      Cat_Expressions_SpriteSheet_1: -259942035
+      Cat_Expressions_SpriteSheet_0: -523329146
+      Cat_Expressions_SpriteSheet_1: 1148923493
+      Cat_Expressions_SpriteSheet_2: -1199053809
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
