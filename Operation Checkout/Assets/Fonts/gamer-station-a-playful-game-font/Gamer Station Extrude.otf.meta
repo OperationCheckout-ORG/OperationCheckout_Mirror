@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 38e03fa306283e5498ce30aa899e50ac
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Gamer Station
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 36851f1714c5d4f428bb8ce55818f238, type: 3}
+  - {fileID: 12800000, guid: 62be956d4ab359e4aafcc95a1f0bfe4a, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
