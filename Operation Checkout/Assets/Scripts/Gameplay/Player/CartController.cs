@@ -295,6 +295,9 @@ public class CartController : MonoBehaviour
             rigidBody.velocity += transform.forward * dashSpeed;
             dashParticles.Play();
             OnDash?.Invoke();
+
+            // Start the stretch animation
+            GetComponent<DashStretch>().StartStretch();
         }
         else if (playerNumber == 2 && P2InputControls.ShoppingCart.Dash.WasPressedThisFrame() &&
                  Time.time - lastDashTime > dashCooldown)
@@ -305,7 +308,10 @@ public class CartController : MonoBehaviour
             rigidBody.velocity += transform.forward * dashSpeed;
             dashParticles.Play();
 
+            // Start the stretch animation
+            GetComponent<DashStretch>().StartStretch();
         }
+
 
         // Handle dash duration
         if (isDashing)
