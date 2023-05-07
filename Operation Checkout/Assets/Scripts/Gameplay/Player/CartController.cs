@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
-//using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody))]
 public class CartController : MonoBehaviour
 {
     [Header("CORE")]
+    [Space(10)]
     public PlayerController _playerController;
     public int playerNumber;
     public Rigidbody rigidBody;
@@ -18,10 +19,10 @@ public class CartController : MonoBehaviour
     [SerializeField] private RagdollController _ragdollController;
     private IAbilityController _abilityController;
    
-    
+    [Space(20)]
 
     [Header("MOVEMENT & SPEED VARIABLES")] 
-    [Space(20)]
+    [Space(10)]
     public float moveSpeed = 20f;
 
     [SerializeField] private float _maxSpeed = 25f;
@@ -32,22 +33,39 @@ public class CartController : MonoBehaviour
     private Quaternion _prevRotation;
     [SerializeField] private float _turnAngleThreshold = 60f;
     [SerializeField] private float _turningThreshold = 10f;
+    
+    [Space(20)]
+    
+    [Header("INPUT")]
+    [Space(10)]
+    public P1InputControls P1InputControls;
+    public P2InputControls P2InputControls;
+    private Vector2 _p1Input;
+    private Vector2 _p2Input;
+    public bool isControlledByPlayer = true;
 
+    [Space(20)]
 
     [Header("CART VARIABLES")] 
-    [Space(20)] [SerializeField]
-    private Transform _frontOfCart;
+    [Space(10)] 
+    [SerializeField] private Transform _frontOfCart;
     [SerializeField] private Vector3 _extents;
-
-    [Header("TRAILS/PARTICLE EFFECTS")] 
-    [Space(20)] [SerializeField]
-    private TrailRenderer[] _skids;
-
+    
+    [Space(20)]
+    
+    [Header("VISUALS")]
+    [Space(10)]
+    [SerializeField] private float lensDistortionIntensity = 0.1f;
+    [SerializeField] private float paniniProjectionAmount = 0.1f;
+    [SerializeField] private TrailRenderer[] _skids;
+    
     [SerializeField] private AudioSource _skidSource;
     [SerializeField] private float _skidThreshold = 1;
 
-    [Header("ABILITY VARIABLES")] 
     [Space(20)]
+    
+    [Header("ABILITY VARIABLES")] 
+    [Space(10)]
     public float maxRamMagnitude = 20;
     public float ramCooldown = 5;
     public float ramDuration = 1;
@@ -77,32 +95,26 @@ public class CartController : MonoBehaviour
     private float lastDashTime = 0f;
 
 
-    [Header("PICKUP/CHECKOUT MECHANICS")] 
+    [Header("PICKUP/CHECKOUT MECHANICS")]
+    [Space(10)]
     [SerializeField] private CartInventory _inventory;
 
-
+    [Space(20)]
+    
     [Header("LAYER MASKS")] 
-    [Space(20)] 
+    [Space(10)] 
     public LayerMask enemyMask;
 
     [Header("EVENTS")] 
-    [Space(20)] 
+    [Space(10)] 
     public UnityEvent OnMoveSmoke;
     public UnityEvent OnCartCollision;
     public UnityEvent OnDash;
     public UnityEvent OnPickup;
     public UnityEvent OnCheckout;
     
-    [Space(20)]
     
-    [Header("INPUT")]
-    // Public variables
-    public P1InputControls P1InputControls;
-    public P2InputControls P2InputControls;
-    private Vector2 _p1Input;
-    private Vector2 _p2Input;
-    public bool isControlledByPlayer = true;
-    
+
 
     #region Initialization
 
@@ -280,6 +292,19 @@ public class CartController : MonoBehaviour
 
     #region Input
 
+    private void Dash()
+    {
+        lastDashTime = Time.time;
+        isDashing = true;
+        dashTime = 0f;
+        rigidBody.velocity += transform.forward * dashSpeed;
+        dashParticles.Play();
+        OnDash?.Invoke();
+
+        // Start the stretch animation
+        GetComponent<DashStretch>().StartStretch();
+    }
+
     public void HandleInput()
     {
         _p1Input = P1InputControls.ShoppingCart.Movement.ReadValue<Vector2>();
@@ -289,29 +314,13 @@ public class CartController : MonoBehaviour
         if (playerNumber == 1 && P1InputControls.ShoppingCart.Dash.WasPressedThisFrame() &&
             Time.time - lastDashTime > dashCooldown)
         {
-            lastDashTime = Time.time;
-            isDashing = true;
-            dashTime = 0f;
-            rigidBody.velocity += transform.forward * dashSpeed;
-            dashParticles.Play();
-            OnDash?.Invoke();
-
-            // Start the stretch animation
-            GetComponent<DashStretch>().StartStretch();
+            Dash();
         }
         else if (playerNumber == 2 && P2InputControls.ShoppingCart.Dash.WasPressedThisFrame() &&
                  Time.time - lastDashTime > dashCooldown)
         {
-            lastDashTime = Time.time;
-            isDashing = true;
-            dashTime = 0f;
-            rigidBody.velocity += transform.forward * dashSpeed;
-            dashParticles.Play();
-
-            // Start the stretch animation
-            GetComponent<DashStretch>().StartStretch();
+            Dash();
         }
-
 
         // Handle dash duration
         if (isDashing)
@@ -325,12 +334,14 @@ public class CartController : MonoBehaviour
 
         _p2Input = P2InputControls.ShoppingCart.Movement.ReadValue<Vector2>();
         p2Movement = new Vector3(0, 0, _p2Input.y);
-        
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _playerController.LeaveCart();
         }
     }
+
+    
 
     public void HandleGameStateChanged()
     {
@@ -401,19 +412,36 @@ public class CartController : MonoBehaviour
     #endregion
 
     #region Visuals
-
-    //[Header("VISUALS")] private ChromaticAberration _chrome;
+    
+    private ChromaticAberration _chrome;
+    private PaniniProjection _paniniProjection;
+    private LensDistortion _lensDistortion;
+    
 
     void SetupVisuals()
     {
-        //var volume = FindObjectOfType<Volume>();
-        //volume.profile.TryGet(out _chrome);
+        var volume = FindObjectOfType<Volume>();
+        volume.profile.TryGet(out _chrome);
+        volume.profile.TryGet(out _paniniProjection);
+        volume.profile.TryGet(out _lensDistortion);
     }
 
     void HandleVisuals()
     {
-        //_chrome.intensity.value = Mathf.InverseLerp(10, maxRamMagnitude, rigidBody.velocity.magnitude);
+        _chrome.intensity.value = Mathf.InverseLerp(1, maxRamMagnitude, rigidBody.velocity.magnitude);
+
+        if (isDashing)
+        {
+            _lensDistortion.intensity.value = lensDistortionIntensity;
+            _paniniProjection.distance.value = paniniProjectionAmount;
+        }
+        else
+        {
+            _lensDistortion.intensity.value = 0;
+            _paniniProjection.distance.value = 0;
+        }
     }
+
 
     void HandleSkids()
     {
